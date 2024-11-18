@@ -12,3 +12,8 @@ flask run
 git init
 git status
 code .gitignore                        (find Python gitignore template online)
+                                       (create repository at https://github.com/)
+
+git remote add origin https://github.com/..path../repository_name.git
+git branch -M main
+git push -u origin main
