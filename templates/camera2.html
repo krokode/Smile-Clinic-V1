@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Camera page</title>
+   <!-- Start Favicon -->
+   <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+   <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+   <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32x32.png') }}">
+   <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon-16x16.png') }}">
+   <link rel="manifest" href="{{ url_for('static', filename='site.webmanifest') }}">
+   <!-- End Favicon -->
+</head>
+
+<style>
+   #container {
+      margin: 0px auto;
+      width: 500px;
+      height: 375px;
+      border: 10px #333 solid;
+   }
+
+   #videoElement {
+      width: 500px;
+      height: 375px;
+      background-color: #666;
+   }
+</style>
+
+<body>
+   <div>
+      <h1 align="center">360 View</h1>
+   </div>
+   <div>
+      <p align="center" style="color: red">Wait until 360 View plans are rendered.</p>
+   </div>
+   <div id="container">
+      <video autoplay="true" id="videoElement"></video>
+   </div>
+
+   <script>
+      var video = document.querySelector("#videoElement");
+
+      if (navigator.mediaDevices.getUserMedia) {
+         navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function (stream) {
+               video.srcObject = stream;
+            })
+            .catch(function (error) {
+               alert("Your device has no camera or Something went wrong!");
+            });
+      }
+   </script>
+
+</body>
+
+</html>

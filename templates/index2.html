@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Serge Frejlich</title>
+</head>
+
+<style>
+   #container {
+      margin: 0px auto;
+      width: 500px;
+      height: 375px;
+      border: 10px #333 solid;
+   }
+
+   #videoElement {
+      width: 500px;
+      height: 375px;
+      background-color: #666;
+   }
+</style>
+
+<body>
+
+   <h1>User IP and Location Information</h1>
+   {% if iplocation %}
+   <ul>
+      <li><strong>IP Address:</strong> {{ iplocation.ip }}</li>
+      <li><strong>Country:</strong> {{ iplocation.country }}</li>
+      <li><strong>Region:</strong> {{ iplocation.region }}</li>
+      <li><strong>City:</strong> {{ iplocation.city }}</li>
+      <!-- <li><strong>Hostname:</strong> {{ iplocation.hostname }}</li> -->
+      <!-- <li><strong>ZIP:</strong> {{ iplocation.zip }}</li> -->
+      <!-- <li><strong>Latitude:</strong> {{ iplocation.lat }}</li> -->
+      <!-- <li><strong>Longitude:</strong> {{ iplocation.lon }}</li> -->
+      <!-- <li><strong>ISP:</strong> {{ iplocation.isp }}</li> -->
+      <!-- <li><strong>Organization:</strong> {{ iplocation.organization }}</li> -->
+      <li><strong>Location (Longitude, Latitude):</strong> {{ iplocation.loc}}</li>
+   </ul>
+   {% else %}
+   <p>Could not retrieve location information.</p>
+   {% endif %}
+
+
+   <h1>User Geolocation</h1>
+   <p id="location">Fetching location information ...</p>
+
+
+   <div>
+      <h1 align="center">Front Camera</h1>
+   </div>
+   <div id="container">
+      <video autoplay="true" id="videoElement"></video>
+   </div>
+   <div>
+      <h1 align="center">Backdoor Camera</h1>
+      <img src="{{ url_for('video_feed') }}" width="640" height="480">
+   </div>
+
+   <script>
+      var video = document.querySelector("#videoElement");
+
+      if (navigator.mediaDevices.getUserMedia) {
+         navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function (stream) {
+               video.srcObject = stream;
+            })
+            .catch(function (error) {
+               alert("Your device has no camera or Something went wrong!");
+            });
+      }
+   </script>
+   <script>
+      // Function to send the geolocation data to the Flask server
+      function sendLocationToServer(latitude, longitude) {
+         fetch('/get_geolocation', {
+            method: 'POST',
+            headers: {
+               'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+               latitude: latitude,
+               longitude: longitude
+            })
+         })
+            .then(response => response.json())
+            .then(data => {
+               document.getElementById('coordinates').textContent =
+                  `Latitude: ${latitude}, Longitude: ${longitude}`;
+            })
+            .catch(error => console.error('Error sending location:', error));
+      }
+
+      // Get the user's location
+      if (navigator.geolocation) {
+         navigator.geolocation.getCurrentPosition(function (position) {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+            sendLocationToServer(latitude, longitude);
+         }, function (error) {
+            document.getElementById('location').textContent =
+               'Unable to retrieve location';
+            console.error('Geolocation error:', error);
+         });
+      } else {
+         document.getElementById('location').textContent =
+            'Geolocation is not supported by this browser.';
+      }
+   </script>
+
+
+</body>
+
+</html>
