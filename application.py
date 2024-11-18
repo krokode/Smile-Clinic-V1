@@ -8,7 +8,6 @@ from datetime import datetime
 
 # web app instance
 application = Flask(__name__)
-app = application
 
 # Directory to save images
 UPLOAD_FOLDER = "captured_images"
@@ -37,7 +36,7 @@ def get_ip_based_geolocation(ip):
 # root route
 
 
-@app.route("/")
+@application.route("/")
 def index_html():
     location_info = {}
     for i in range(len(request.access_route)):
@@ -54,12 +53,12 @@ def index_html():
     return render_template("index.html")
 
 
-@app.route("/camera")
+@application.route("/camera")
 def camera_html():
     return render_template("camera.html")
 
 
-@app.route('/upload', methods=['POST'])
+@application.route('/upload', methods=['POST'])
 def upload_image():
     try:
         # Get the base64-encoded image data from the request
@@ -87,7 +86,7 @@ def upload_image():
 # main loop
 # if __name__ == "__main__":
     # start web server localhost
-    # app.run(host="192.168.0.164", port=5000, debug=True)
-    # app.run(host="127.0.0.1", port=8080, debug=True)
+    # application.run(host="192.168.0.164", port=5000, debug=True)
+    # application.run(host="127.0.0.1", port=8080, debug=True)
     # start web server aws
-    # app.run(host="0.0.0.0", port=8000)
+    # application.run(host="0.0.0.0", port=8000)
