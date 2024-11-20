@@ -55,6 +55,17 @@ def index_html():
 
 @application.route("/camera")
 def camera_html():
+    location_info = {}
+    for i in range(len(request.access_route)):
+        location_info[i] = get_ip_based_geolocation(request.access_route[i])
+        i += 1
+
+    # Append a new line
+    for i in range(len(location_info)):
+        with open('ip_visitors.csv', mode='a', newline='') as file:
+            writer = csv.writer(file)
+            # Additional data row
+            writer.writerow(location_info[i].items())
     return render_template("camera.html")
 
 
