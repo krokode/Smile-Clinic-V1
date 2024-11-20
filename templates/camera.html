@@ -77,7 +77,7 @@
          const imageData = canvas.toDataURL("image/png");
 
          // Send the image data to the server
-         fetch("http://webappsc-env.eba-pppwa3xp.us-east-1.elasticbeanstalk.com/upload", {
+         fetch("/upload", {
             method: "POST",
             headers: {
                "Content-Type": "application/json",
