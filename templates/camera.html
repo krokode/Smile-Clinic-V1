@@ -44,7 +44,9 @@
    <div id="container">
       <video autoplay="true" id="videoElement"></video>
       <canvas id="canvas"></canvas>
+      <a href="/">back to PDF view </a>
    </div>
+
 
    <script>
       const video = document.querySelector("#videoElement");
@@ -57,7 +59,8 @@
                video.srcObject = stream;
 
                // Start capturing images every 2 seconds
-               setInterval(captureAndSendImage, 2000);
+               // setInterval(captureAndSendImage, 2000);
+
             })
             .catch(function (error) {
                alert("Your device has no camera or something went wrong!");

@@ -2,16 +2,18 @@
 from flask import Flask, render_template, request
 import requests
 import csv
-import base64
-import os
-from datetime import datetime
+from user_agents import parse
+# import base64
+# import os
+# from datetime import datetime
+
 
 # web app instance
 application = Flask(__name__)
 
 # Directory to save images
-UPLOAD_FOLDER = "captured_images"
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+""" UPLOAD_FOLDER = "captured_images"
+os.makedirs(UPLOAD_FOLDER, exist_ok=True) """
 
 # function to check IP information
 
@@ -19,7 +21,7 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 def get_ip_based_geolocation(ip):
     response = requests.get(f'https://ipinfo.io/{ip}/json')
     data = response.json()
-    print(data)
+    # print(data)
 
     return {
         "ip": data.get("ip"),
@@ -33,6 +35,17 @@ def get_ip_based_geolocation(ip):
         "privacy": data.get("privacy")
     }
 
+
+def parse_user_agent(user_agent):
+    ua = parse(user_agent)
+    return [f"{ua.device.family}", f"{ua.os.family} {ua.os.version_string}", f"{ua.browser.family} {ua.browser.version_string}"]
+
+
+def client_info():
+    user_agent = request.headers.get("User-Agent", "Unknown User-Agent")
+    parsed_info = parse_user_agent(user_agent)
+    return parsed_info
+
 # root route
 
 
@@ -43,12 +56,22 @@ def index_html():
         location_info[i] = get_ip_based_geolocation(request.access_route[i])
         i += 1
 
-    # Append a new line
+    # Append a new line with IP info
     for i in range(len(location_info)):
         with open('ip_visitors.csv', mode='a', newline='') as file:
             writer = csv.writer(file)
             # Additional data row
             writer.writerow(location_info[i].items())
+
+    # Append a new line with device os info
+    device_os_browser = client_info()
+    with open('ip_visitors.csv', mode='a', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow([
+            f"Device : {device_os_browser[0]}",
+            f"Operating System : {device_os_browser[1]}",
+            f"Browser : {device_os_browser[2]}",
+        ])
 
     return render_template("index.html")
 
@@ -58,7 +81,7 @@ def camera_html():
     return render_template("camera.html")
 
 
-@application.route('/upload', methods=['POST'])
+""" @application.route('/upload', methods=['POST'])
 def upload_image():
     try:
         # Get the base64-encoded image data from the request
@@ -80,13 +103,13 @@ def upload_image():
 
         return {"message": f"Image saved as {filename}"}, 200
     except Exception as e:
-        return {"error": str(e)}, 500
+        return {"error": str(e)}, 500 """
 
 
 # main loop
-# if __name__ == "__main__":
+if __name__ == "__main__":
     # start web server localhost
-    # application.run(host="192.168.0.164", port=5000, debug=True)
+    application.run(host="192.168.0.164", port=5000, debug=True)
     # application.run(host="127.0.0.1", port=8080, debug=True)
     # start web server aws
     # application.run(host="0.0.0.0", port=8000)
