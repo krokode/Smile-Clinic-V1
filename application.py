@@ -3,17 +3,17 @@ from flask import Flask, render_template, request
 import requests
 import csv
 from user_agents import parse
-# import base64
-# import os
-# from datetime import datetime
+from datetime import datetime
+import base64
+import os
 
 
 # web app instance
 application = Flask(__name__)
 
 # Directory to save images
-""" UPLOAD_FOLDER = "captured_images"
-os.makedirs(UPLOAD_FOLDER, exist_ok=True) """
+UPLOAD_FOLDER = "captured_images"
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # function to check IP information
 
@@ -68,7 +68,7 @@ def index_html():
     for i in range(len(location_info)):
         with open('ip_visitors.csv', mode='a', newline='') as file:
             writer = csv.writer(file)
-            writer.writerow(["Session start"])
+            writer.writerow(["Session start", datetime.now()])
             # Additional data row
             writer.writerow(location_info[i].items())
 
@@ -88,7 +88,7 @@ def index_html():
         writer = csv.writer(file)
         # Additional data row
         writer.writerow([user_environment])
-        writer.writerow(["Session end"])
+        writer.writerow(["Session end", datetime.now()])
 
     return render_template("index.html")
 
@@ -98,7 +98,7 @@ def camera_html():
     return render_template("camera.html")
 
 
-""" @application.route('/upload', methods=['POST'])
+@application.route('/upload', methods=['POST'])
 def upload_image():
     try:
         # Get the base64-encoded image data from the request
@@ -120,13 +120,14 @@ def upload_image():
 
         return {"message": f"Image saved as {filename}"}, 200
     except Exception as e:
-        return {"error": str(e)}, 500 """
+        return {"error": str(e)}, 500
 
 
 # main loop
-if __name__ == "__main__":
+# if __name__ == "__main__":
     # start web server localhost
-    application.run(host="192.168.0.164", port=5000, debug=True)
+    # application.run(host="192.168.0.164", port=8080,
+    #                ssl_context='adhoc', debug=True)
     # application.run(host="127.0.0.1", port=8080, debug=True)
     # start web server aws
-    # application.run(host="0.0.0.0", port=8000)
+    # application.run(host="0.0.0.0")
