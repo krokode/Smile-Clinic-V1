@@ -46,6 +46,14 @@ def client_info():
     parsed_info = parse_user_agent(user_agent)
     return parsed_info
 
+
+def client_ip():
+    return f"Device IP: {request.remote_addr}"
+
+
+def show_environ():
+    return f"Server environment: {request.environ}"
+
 # root route
 
 
@@ -60,6 +68,7 @@ def index_html():
     for i in range(len(location_info)):
         with open('ip_visitors.csv', mode='a', newline='') as file:
             writer = csv.writer(file)
+            writer.writerow(["Session start"])
             # Additional data row
             writer.writerow(location_info[i].items())
 
@@ -71,7 +80,15 @@ def index_html():
             f"Device : {device_os_browser[0]}",
             f"Operating System : {device_os_browser[1]}",
             f"Browser : {device_os_browser[2]}",
+            f"request.remote_addr: {client_ip()}",
         ])
+
+    user_environment = show_environ()
+    with open('ip_visitors.csv', mode='a', newline='') as file:
+        writer = csv.writer(file)
+        # Additional data row
+        writer.writerow([user_environment])
+        writer.writerow(["Session end"])
 
     return render_template("index.html")
 
