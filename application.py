@@ -124,10 +124,10 @@ def upload_image():
 
 
 # main loop
-# if __name__ == "__main__":
+if __name__ == "__main__":
     # start web server localhost
-    # application.run(host="192.168.0.164", port=8080,
-    #                ssl_context='adhoc', debug=True)
+    application.run(host="192.168.0.164", port=8080,
+                    ssl_context='adhoc', debug=True)
     # application.run(host="127.0.0.1", port=8080, debug=True)
     # start web server aws
     # application.run(host="0.0.0.0")

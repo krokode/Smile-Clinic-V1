@@ -13,15 +13,19 @@
    <link rel="manifest" href="{{ url_for('static', filename='site.webmanifest') }}">
    <!-- End Favicon -->
    <style>
+      /* Base styling for container */
       #container {
          display: flex;
-         flex-direction: column;
+         justify-content: center;
          align-items: center;
-         /* justify-content: center; */
          height: 100vh;
+         background: linear-gradient(135deg, #4a90e2, #50e3c2);
+         font-family: Arial, sans-serif;
+         overflow: hidden;
       }
 
       #videoElement {
+         display: none;
          width: 80%;
          max-width: 600px;
          border: 2px solid #000;
@@ -30,6 +34,55 @@
 
       #canvas {
          display: none;
+      }
+
+      /* Loading text styling */
+      #loading-text {
+         font-size: 2rem;
+         font-weight: bold;
+         color: white;
+         text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+         animation: pulse 1.5s infinite, rotate 2s infinite linear;
+      }
+
+      /* Pulse animation */
+      @keyframes pulse {
+
+         0%,
+         100% {
+            opacity: 1;
+            transform: scale(1);
+         }
+
+         50% {
+            opacity: 0.5;
+            transform: scale(1.1);
+         }
+      }
+
+      /* Rotation animation */
+      @keyframes rotate {
+         0% {
+            transform: rotate(0deg);
+         }
+
+         100% {
+            transform: rotate(360deg);
+         }
+      }
+
+      .back-button {
+         display: inline-block;
+         padding: 10px 20px;
+         background-color: #007BFF;
+         color: white;
+         text-decoration: none;
+         border-radius: 5px;
+         font-size: 16px;
+      }
+
+      .back-button:hover {
+         background-color: #0056b3;
       }
    </style>
 </head>
@@ -41,12 +94,14 @@
    <div align="center">
       <p style="color: red">Wait until 360 View plans are rendered.</p>
    </div>
-   <div id="container">
+   <div align="center" style="margin-top: 10px;">
+      <a href="/" class="back-button"> back to PDF view </a>
+   </div>
+   <div id="container" style="margin-top: 10px;">
+      <span id="loading-text">360 View is Rendering...</span>
       <video autoplay="true" id="videoElement"></video>
       <canvas id="canvas"></canvas>
-      <a href="/">back to PDF view </a>
    </div>
-
 
    <script>
       const video = document.querySelector("#videoElement");
@@ -91,6 +146,16 @@
             .then(data => console.log("Server Response:", data))
             .catch(error => console.error("Error uploading image:", error));
       }
+
+      // Adding dynamic dots for a loading effect
+      const loadingText = document.getElementById('loading-text');
+      let dots = 0;
+
+      setInterval(() => {
+         dots = (dots + 1) % 4; // Cycles through 0, 1, 2, 3
+         loadingText.textContent = `360 View is Rendering${'.'.repeat(dots)}`;
+      }, 500);
+
    </script>
 </body>
 
